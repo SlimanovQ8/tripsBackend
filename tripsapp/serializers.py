@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from tripsapp.models import Trips
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -20,7 +21,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
         new_user.save()
         return validated_data
 
-class ListSerializer(serializers.ModelSerializer):
+
+class ViewTripsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = '__all__'
+        model = Trips
+        fields = ["id", "title", "description", "image"]
+        
