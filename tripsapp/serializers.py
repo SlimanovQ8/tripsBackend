@@ -26,4 +26,8 @@ class ViewTripsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trips
         fields = ["id", "title", "description", "image"]
-        
+
+class UsersList(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"

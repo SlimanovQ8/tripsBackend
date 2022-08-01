@@ -4,9 +4,12 @@ from django.shortcuts import render, HttpResponse
 from rest_framework import generics
 from rest_framework.generics import ListAPIView
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
-from .serializers import UserCreateSerializer,ViewTripsSerializer
+
+from .serializers import *
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -15,4 +18,4 @@ class UserCreateAPIView(generics.CreateAPIView):
 
 class UsersListAPIView(ListAPIView):
     queryset = User.objects.all()
-    serializer_class = ViewTripsSerializer
+    serializer_class = UsersList
