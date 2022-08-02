@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.generics import DestroyAPIView,UpdateAPIView
+from tripsapp.models import Trips
+
 from tripsapp.models import Trips
 
 
@@ -31,3 +35,36 @@ class UsersList(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def get_token(cls, user):
+        token = super(CustomTokenObtainPairSerializer, cls).get_token(user)
+        token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['email'] = user.email
+        return token
+
+class CreateTripsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trips
+        fields = ["title", "description", "image"]
+        extra_kwargs = {
+            "owner": {
+                "read_only": True
+            }
+        }
+    def create(self, validated_data):
+        title = validated_data["title"]
+        description = validated_data["description"]
+        image = validated_data["image"]
+        owner = self.context["request"].user
+        new_trip = Trips(title=title, description=description, image=image, owner=owner)
+        new_trip.save()
+        return validated_data
+
+
+class UpdateTripsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trips
+        fields = ['title', 'description','image']
