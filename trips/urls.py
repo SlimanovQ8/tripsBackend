@@ -20,13 +20,22 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from tripsapp import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("users-list/", views.UsersListAPIView.as_view(), ),
+    path("trips-list/", views.TripsListAPIView.as_view(), ),
 
     path("register/", views.UserCreateAPIView.as_view()),
     path("login/", views.MyTokenObtainPairView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
-
+    path("trips/<int:object_id>/update/", views.UpdateView.as_view(), name="update-trip"),
+    path("trips/<int:object_id>/delete/", views.DeleteView.as_view(), name="delete-trip"),
+    path("trips/create/", views.CreateView.as_view(), name="delete-trip"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

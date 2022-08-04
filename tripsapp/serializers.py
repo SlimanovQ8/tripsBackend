@@ -31,7 +31,7 @@ class ViewTripsSerializer(serializers.ModelSerializer):
         model = Trips
         fields = ["id", "title", "description", "image"]
 
-class UsersList(serializers.ModelSerializer):
+class UsersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
@@ -43,8 +43,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['first_name'] = user.first_name
         token['email'] = user.email
+        token['user_id'] = user.id
         return token
 
+class TripsListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trips
+        fields = "__all__"
 class CreateTripsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trips
@@ -58,8 +63,9 @@ class CreateTripsSerializer(serializers.ModelSerializer):
         title = validated_data["title"]
         description = validated_data["description"]
         image = validated_data["image"]
+        #id = validated_data["id"]
         owner = self.context["request"].user
-        new_trip = Trips(title=title, description=description, image=image, owner=owner)
+        new_trip = Trips(title=title, description=description, image=image, user=owner)
         new_trip.save()
         return validated_data
 
@@ -68,3 +74,7 @@ class UpdateTripsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trips
         fields = ['title', 'description','image']
+
+    def check_user(self, obj):
+        if obj.owner != self.context["request"].user:
+            raise serializers.ValidationError("You are not the owner of this trip")
