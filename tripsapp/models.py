@@ -1,6 +1,7 @@
 from django.db import models
 # Create your models here.
-
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 #Trips have an id, title, description, and image
 class Trips(models.Model):
     id = models.AutoField(primary_key=True)
@@ -10,13 +11,9 @@ class Trips(models.Model):
     user = models.ForeignKey('auth.User', related_name='trips', on_delete=models.CASCADE)
 
 
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    username = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    trips = models.ManyToManyField(Trips, related_name='users')
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(upload_to='images', default="https://pngimage.net/wp-content/uploads/2018/06/profile-avatar-png-6.png", null=True, blank= True)
+    bio =  models.TextField(default="", null=True, blank= True)
+    def __str__(self):
+        return self.user.username
